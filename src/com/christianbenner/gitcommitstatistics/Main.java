@@ -164,19 +164,23 @@ public class Main {
 						// Try to determine the content type - customizable (HOW SHOULD WE DO THIS?)
 						
 						boolean acceptedFile = true;
-						boolean matchesWhitelist = false;
-						for(int i = 0; i < whiteList.size() && !matchesWhitelist; i++){
-							if(content.contains(whiteList.get(i))){
-								matchesWhitelist = true;
+						boolean shallAccept = false;
+						if(whiteList.size() > 0){
+							// No whitelist present
+							for(int i = 0; i < whiteList.size() && !shallAccept; i++){
+								if(content.contains(whiteList.get(i))){
+									shallAccept = true;
+								}
 							}
-						}
-						
-						if(!matchesWhitelist){
-							acceptedFile = false;
+							
+							if(!shallAccept){
+								acceptedFile = false;
+							}
 						}
 						
 						if(acceptedFile){
 							//System.out.println("Accepted as a file [" + content + "]"); //DEV
+							log("Accepted file [" + content + "]");
 							
 							// Add file to list
 							addFile(new CommittedFile(content));
