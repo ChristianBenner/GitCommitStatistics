@@ -56,6 +56,12 @@ public class Main {
 			
 			extensionScanner.close();
 		}
+		
+		log("Allowed extensions:");
+		for(int i = 0; i < whiteList.size(); i++){
+			log(whiteList.get(i));
+		}
+		log("");
 
 		// Retrieve a Git log from user input custom path
 		File logFile = new File("gitlog.log");
@@ -158,10 +164,15 @@ public class Main {
 						// Try to determine the content type - customizable (HOW SHOULD WE DO THIS?)
 						
 						boolean acceptedFile = true;
-						for(int i = 0; i < whiteList.size(); i++){
-							if(!content.contains(whiteList.get(i))){
-								acceptedFile = false;
+						boolean matchesWhitelist = false;
+						for(int i = 0; i < whiteList.size() && !matchesWhitelist; i++){
+							if(content.contains(whiteList.get(i))){
+								matchesWhitelist = true;
 							}
+						}
+						
+						if(!matchesWhitelist){
+							acceptedFile = false;
 						}
 						
 						if(acceptedFile){
