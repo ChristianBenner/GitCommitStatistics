@@ -20,49 +20,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+// Local imports
 import com.christianbenner.gitcommitstatistics.CommittedFile;
 
 public class Main {
+	// Global list variables
 	static List<CommittedFile> fileList = new ArrayList<CommittedFile>();
 	static List<String> whiteList = new ArrayList<String>();
 	
-	static boolean logging = false;
-	static boolean fileLogging = false;
-	
-	static PrintStream logStream = null;
+	// Global logging variables
+	static PrintStream logStream;
+	static boolean consoleLogging;
+	static boolean fileLogging;
 	
 	public static void main(String[] args){
-		// Setup logging and whitelist state
-		if(args.length > 0){
-			if(args[0].equals("true")){
-				logging = true;
-				try {
-					logStream = new PrintStream("GCSLog.txt");
-					fileLogging = true;
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
-					System.err.println("Failed to create log file");
-				}
-			}
-		}
-		if(args.length > 1){
-			String unstructuredWhitelist = args[1];
-			Scanner extensionScanner = new Scanner(unstructuredWhitelist);
-			extensionScanner.useDelimiter(",");
-			
-			while(extensionScanner.hasNext()){
-				whiteList.add("." + extensionScanner.next());
-			}
-			
-			extensionScanner.close();
-		}
+		Main GCS_Core = new Main();
+		GCS_Core.checkArguments(args);
 		
-		log("Allowed extensions:");
-		for(int i = 0; i < whiteList.size(); i++){
-			log(whiteList.get(i));
-		}
-		log("");
-
 		// Retrieve a Git log from user input custom path
 		File logFile = new File("gitlog.log");
 
@@ -86,6 +60,55 @@ public class Main {
 		writeCSV();
 	}
 	
+	void checkArguments(String[] arguments){
+		// Check if arguments have been provided
+		if(arguments.length > 0){
+			// Setup logging and whitelist state
+			if(arguments[0].equals("true")){
+				consoleLogging = true;
+				fileLogging = true;
+				
+				// Initiate the log stream
+				try {
+					logStream = new PrintStream("gcslog.txt");
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+					System.err.println("Failed to create log file");
+				}
+			}else if(arguments[0].equals("console")){
+				consoleLogging = true;
+			}else if(arguments[0].equals("file")){
+				fileLogging = true;
+			}
+
+			// Check if extension whitelist has been provided
+			if(arguments.length > 1){
+				String unstructuredWhitelist = arguments[1];
+				Scanner extensionScanner = new Scanner(unstructuredWhitelist);
+				extensionScanner.useDelimiter(",");
+				
+				while(extensionScanner.hasNext()){
+					whiteList.add("." + extensionScanner.next());
+				}
+				
+				extensionScanner.close();
+				
+				log("Allowed extensions:");
+				for(int i = 0; i < whiteList.size(); i++){
+					log(whiteList.get(i));
+				}
+				log("");
+			}
+		}
+	}
+	
+	public Main(){
+		//Init variables
+		consoleLogging = false;
+		fileLogging = false;
+		logStream = null;
+	}
+
 	private static void writeCSV(){
 		System.out.println("Writing CSV");
 		PrintWriter csvOut = null;
@@ -235,7 +258,7 @@ public class Main {
 	}
 	
 	private static void fileLog(){
-		if(logging){
+		if(consoleLogging){
 			for(int n = 0; n < fileList.size(); n++){
 				System.out.print("File[" + fileList.get(n).m_filename + "], created by: " + fileList.get(n).m_owner + " with editors: ");
 				
@@ -254,7 +277,7 @@ public class Main {
 	}
 	
 	public static void log(String text){
-		if(logging){
+		if(consoleLogging){
 			System.out.println("[GCS] " + text);
 			
 			if(fileLogging){
