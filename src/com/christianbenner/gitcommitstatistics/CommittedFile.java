@@ -10,19 +10,21 @@
  *PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.christianbenner.gitcommitstatistics;
+package com.christianbenner.gcsoptimal;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import com.christianbenner.gitcommitstatistics.FileEditor;
+import com.christianbenner.gcsoptimal.FileEditor;
+import com.christianbenner.gcsoptimal.Logging;
 
 public class CommittedFile {
 	public CommittedFile(String filename){
 		m_filename = filename;
 	}
 	
-	public void addEditor(String editorName, String date){
+	void addEditor(String editorName, String date){
 		// Check if editor exists on array
 		boolean match = false;
 		for(int n = 0; n < m_editors.size() && !match; n++){
@@ -35,9 +37,9 @@ public class CommittedFile {
 		}
 		
 		if(match){
-			Main.log("Editor already existent"); //DEV
+			Logging.log("Editor already existent"); //DEV
 		}else{
-			Main.log("Added new editor to " + m_filename); //DEV
+			Logging.log("Added new editor to " + m_filename); //DEV
 			m_editors.add(new FileEditor(editorName));
 		}
 		
@@ -46,23 +48,23 @@ public class CommittedFile {
 			m_ownerDate = date;
 			m_owner = editorName;
 		}else{
-			Main.log("Year[" + scanDate(date, 0) + "], Month[" + scanDate(date, 1) + "], day[" + scanDate(date, 2) + "]");
+			Logging.log("Year[" + scanDate(date, 0) + "], Month[" + scanDate(date, 1) + "], day[" + scanDate(date, 2) + "]");
 
 			if(scanDate(date, 0) < scanDate(m_ownerDate, 0)){ //find a way to interpret date properly
 				m_ownerDate = date;
 				m_owner = editorName;
-				Main.log("Added " + editorName + " as owner of " + m_filename);
+				Logging.log("Added " + editorName + " as owner of " + m_filename);
 			}else if(scanDate(date, 0) == scanDate(m_ownerDate, 0) &&
 					scanDate(date, 1) < scanDate(m_ownerDate, 1)){
 				m_ownerDate = date;
 				m_owner = editorName;
-				Main.log("Added " + editorName + " as owner of " + m_filename);
+				Logging.log("Added " + editorName + " as owner of " + m_filename);
 			}else if(scanDate(date, 0) == scanDate(m_ownerDate, 0) &&
 					scanDate(date, 1) == scanDate(m_ownerDate, 1) &&
 					scanDate(date, 2) < scanDate(m_ownerDate, 2)){
 				m_ownerDate = date;
 				m_owner = editorName;
-				Main.log("Added " + editorName + " as owner of " + m_filename);
+				Logging.log("Added " + editorName + " as owner of " + m_filename);
 			}
 		}
 	}
@@ -98,11 +100,10 @@ public class CommittedFile {
 		}
 	}
 	
+	List<FileEditor> m_editors = new ArrayList<FileEditor>();
 	String m_filename = null;
 	String m_owner = null;
 	String m_ownerDate = null;
-	
-	List<FileEditor> m_editors = new ArrayList<FileEditor>();
 	
 	int m_commitCount = 0;
 }

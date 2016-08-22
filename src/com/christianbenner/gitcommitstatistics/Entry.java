@@ -12,12 +12,13 @@
 
 package com.christianbenner.gcsoptimal;
 
-public class FileEditor {
-	public FileEditor(String name){
-		m_name = name;
+import com.christianbenner.gcsoptimal.GCSMain;
+
+public class Entry {
+	// Entry point
+	public static void main(String[] args){
+		// Init and run program
+		GCSMain core = new GCSMain();
+		core.run(args);
 	}
-	
-	String m_name;
-	int m_commits = 1;
-	float m_commitPercentage = 0;
 }
