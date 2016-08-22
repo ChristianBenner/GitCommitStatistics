@@ -37,30 +37,38 @@ public class Main {
 		Main GCS_Core = new Main();
 		GCS_Core.checkArguments(args);
 		
-		// Retrieve a Git log from user input custom path
+		// Find the log from shell script
 		File logFile = new File("gitlog.log");
 
 		// Read log - introduce custom format
 		System.out.println("[GCS] Scanning...");
-		if(readLog(logFile)){
+		if(GCS_Core.readLog(logFile)){
 			System.out.println("[GCS] Successfully scanned");
+			
+			// Form data - introduce custom format
+			for(int i = 0; i < fileList.size(); i++){
+				fileList.get(i).calculateStats();
+			}
+			
+			// Print files and editors
+			GCS_Core.fileLog();
+			
+			// Write a CSV file presenting the data
+			GCS_Core.writeCSV();
 		}else{
+			// Failed to read, something went wrong
 			System.out.println("[GCS] Scan unsuccessful");
 		}
-		
-		// Form data - introduce custom format
-		for(int n = 0; n < fileList.size(); n++){
-			fileList.get(n).calculateStats();
-		}
-		
-		// Print files and editors
-		fileLog();
-		
-		//Write a CSV file presenting the data
-		writeCSV();
 	}
 	
-	void checkArguments(String[] arguments){
+	public Main(){
+		// Init variables
+		consoleLogging = true;
+		fileLogging = false;
+		logStream = null;
+	}
+	
+	private void checkArguments(String[] arguments){
 		// Check if arguments have been provided
 		if(arguments.length > 0){
 			// Setup logging and whitelist state
@@ -101,16 +109,10 @@ public class Main {
 			}
 		}
 	}
-	
-	public Main(){
-		//Init variables
-		consoleLogging = false;
-		fileLogging = false;
-		logStream = null;
-	}
 
-	private static void writeCSV(){
+	private void writeCSV(){
 		System.out.println("Writing CSV");
+		
 		PrintWriter csvOut = null;
 		try {
 			csvOut = new PrintWriter("gcsdata.csv");
@@ -119,13 +121,18 @@ public class Main {
 			System.err.println("Failed to create CSV file, no permission?");
 		}
 		
+		// Iterate through file list
 		for(int n = 0; n < fileList.size(); n++){
 			float ownerCommitment = 0.0f;
+			// Iterate through files editors
 			for(int i = 0; i < fileList.get(n).m_editors.size(); i++){
+				// Find owner and assign percentage commit
 				if(fileList.get(n).m_owner.equals(fileList.get(n).m_editors.get(i).m_name)){
 					ownerCommitment = fileList.get(n).m_editors.get(i).m_commitPercentage;
 				}
 			}
+			
+			// Print owner and percentage commit
 			csvOut.println(fileList.get(n).m_filename + "," +
 							ownerCommitment + "," + fileList.get(n).m_owner);
 		}
@@ -133,7 +140,7 @@ public class Main {
 		csvOut.close();
 	}
 	
-	private static boolean readLog(File logFile){
+	private boolean readLog(File logFile){
 		Scanner logScanner = null;
 		try {
 			logScanner = new Scanner(logFile);
@@ -228,7 +235,7 @@ public class Main {
 		return true; //successful
 	}
 	
-	private static void addFile(CommittedFile file){
+	private void addFile(CommittedFile file){
 		// Check if file is already in the list
 		boolean exists = false;
 		for(int n = 0; n < fileList.size() && !exists; n++){
@@ -246,7 +253,7 @@ public class Main {
 		}
 	}
 	
-	private static CommittedFile getFile(String filename){
+	private CommittedFile getFile(String filename){
 		for(int n = 0; n < fileList.size(); n++){
 			if(filename.equals(fileList.get(n).m_filename)){
 				return fileList.get(n);
@@ -257,7 +264,7 @@ public class Main {
 		return null;
 	}
 	
-	private static void fileLog(){
+	private void fileLog(){
 		if(consoleLogging){
 			for(int n = 0; n < fileList.size(); n++){
 				System.out.print("File[" + fileList.get(n).m_filename + "], created by: " + fileList.get(n).m_owner + " with editors: ");
@@ -279,10 +286,10 @@ public class Main {
 	public static void log(String text){
 		if(consoleLogging){
 			System.out.println("[GCS] " + text);
-			
-			if(fileLogging){
-				logStream.println(text);
-			}
+		}
+		
+		if(fileLogging){
+			logStream.println(text);
 		}
 	}
 }
