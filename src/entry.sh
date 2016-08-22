@@ -7,5 +7,3 @@ mkdir cloned
 git clone $1 cloned
 git -C cloned/.git log --name-only --pretty=format:'>>>%ce %cd' --date=short > gitlog.log
 java -jar "gcs.jar" $2 $3
-wait 20
-sleep 20
