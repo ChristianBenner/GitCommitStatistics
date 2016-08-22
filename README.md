@@ -24,11 +24,9 @@ GCS takes three different arguments 'cloneurl', 'boolean_consolelogging' and ext
 cloneurl (*):
 This is the clone URL of your Git repository (e.g. https://github.com/ChristianBenner/testGIT.git). This argument is required for the program to produce a report.
 			
-boolean_consolelogging:
-This is a string entry and only excepts the input 'true', 'false', 'file' or 'console'. By default, console logging is set to true, furthermore entering this parameter is optional if entering no whitelist attributes. If logging is set to 'file', the program will only log to the file 'gcslog.txt'. If set to 'console', the program will only log to the console.
-			
-extension_whitelist:
-The extension whitelist is used to allow specific filetypes from being monitored by the program. If no arguments are supplied, all files found in the repository are used. This argument takes as many strings as it is supplied. Usage example: 'entry.sh https://github.com/cookbooks/java.git true md,rb,java'. Seperate arguments with a comma only. To call this argument you must also call 'boolean_consolelogging', as this argument is always read as the third supplied.
+boolean_consolelogging: This is a string entry and only excepts the input '-true', '-false', '-console' or 'file'. By default, console logging is set to false and file logging is set to true, furthermore entering this parameter is optional.
+
+extension_whitelist: The extension whitelist is used to allow specific filetypes from being monitored by the program. If no arguments are supplied, all files found in the repository are used. This argument takes as many strings as it is supplied. Usage example: 'entry.sh https://github.com/cookbooks/java.git -true --md,rb,java'. Seperate arguments with a comma only.
 	
 # Program output
 If GCS successfully reads a log file, it will output the data in a CSV file format. Furthermore the data is structured in the following way:
