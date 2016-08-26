@@ -24,6 +24,10 @@ public class CommittedFile {
 		m_filename = filename;
 	}
 	
+	int getEditorlistSize(){
+		return m_editors.size();
+	}
+	
 	void addEditor(String editorName, String date){
 		// Check if editor exists on array
 		boolean match = false;
@@ -96,6 +100,9 @@ public class CommittedFile {
 		}
 		
 		for(int n = 0; n < m_editors.size(); n++){
+			if(m_editors.get(n).m_name.equals(m_owner)){
+				m_ownerCommitPercentage = ((float) m_editors.get(n).m_commits / (float) m_commitCount) * 100.0f;
+			}
 			m_editors.get(n).m_commitPercentage = ((float) m_editors.get(n).m_commits / (float) m_commitCount) * 100.0f;
 		}
 	}
@@ -104,6 +111,7 @@ public class CommittedFile {
 	String m_filename = null;
 	String m_owner = null;
 	String m_ownerDate = null;
+	float m_ownerCommitPercentage = 0.0f;
 	
 	int m_commitCount = 0;
 }

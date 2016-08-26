@@ -21,6 +21,7 @@ import java.util.Scanner;
 public class LogManager {
 	private List<CommittedFile> m_filelist = new ArrayList<CommittedFile>();
 	private List<String> m_whitelist = new ArrayList<String>();
+	private List<String> m_authorWhitelist = new ArrayList<String>();
 	
 	public boolean readLog(){
 		Logging.log("Scanning...");
@@ -199,5 +200,18 @@ public class LogManager {
 				}
 			}
 		}
+	}
+	
+	// Setters and getters
+	public void addToAuthorWhitelist(String author){
+		m_authorWhitelist.add(author);
+	}
+	
+	public int getAuthorWhitelistSize(){
+		return m_authorWhitelist.size();
+	}
+	
+	public String getAuthorWhitelistValue(int location){
+		return m_authorWhitelist.get(location);
 	}
 }
