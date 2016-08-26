@@ -27,12 +27,19 @@ This is the clone URL of your Git repository (e.g. https://github.com/ChristianB
 boolean_consolelogging: This is a string entry and only excepts the input '-true', '-false', '-console' or 'file'. By default, console logging is set to false and file logging is set to true, furthermore entering this parameter is optional.
 
 extension_whitelist: The extension whitelist is used to allow specific filetypes from being monitored by the program. If no arguments are supplied, all files found in the repository are used. This argument takes as many strings as it is supplied. Usage example: 'entry.sh https://github.com/cookbooks/java.git -true --md,rb,java'. Seperate arguments with a comma only.
-	
+
+author_state: The author state argument takes 3 different options and does not need to be supplied. The three options are '---all', '---creator' and '---custom-'. The all option outputs every author involved in the commit to the CSV, the creator option outputs only the creator of the file to the CSV, and the custom option is a little more complcated. To custom option is an array with values seperated by a comma ','. For example typical usage would be '---custom-user1,user2,etc'.
+
 # Program output
 If GCS successfully reads a log file, it will output the data in a CSV file format. Furthermore the data is structured in the following way:
 	
-	file,percentageOfPrimaryCommits,owner
-	anotherFile,percentageOfPrimaryCommits,owner
+without author arguments:
+	file,[percentageOfPrimaryCommits,owner]
+	anotherFile,[percentageOfPrimaryCommits,owner]
+
+with author arguments:
+	file,[percentageOfPrimaryCommits,owner],{[committer%,committername],[committer2%,committer2name]}
+	anotherFile,[percentageOfPrimaryCommits,owner],{[committer%,committername],[committer2%,committer2name]}
 		
 File:
 	The file CSV output contains the path relative from the main branch of the Git repository, furthermore some files may be structured as 'path/file.extension' whilst others may be structured as 'file.extension'
